@@ -1,17 +1,21 @@
 package org.example.daos;
 
-import org.apache.ibatis.jdbc.SQL;
 import org.example.exceptions.DaoException;
 import org.example.models.Order;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class OrderDao {
@@ -43,10 +47,18 @@ public class OrderDao {
      * POST/Create a new order
      */
     public Order createOrder(Order order) {
-        String sql = "INSERT INTO orders (order_id, user_id) VALUES (?, ?);";
         try {
-            jdbcTemplate.update(sql, order.getId(), order.getUsername());
+            String sql = "INSERT INTO orders (username) VALUES (?);";
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbcTemplate.update(connection -> {
+                        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                        ps.setString(1, order.getUsername());
+                        return ps;
+                    }, keyHolder);
+            order.setId(keyHolder.getKey().intValue());
+
             return order;
+            //return Objects.requireNonNull(keyHolder.getKey()).longValue();
         } catch (EmptyResultDataAccessException e) {
             throw new DaoException("Failed to create new order.");
         }
