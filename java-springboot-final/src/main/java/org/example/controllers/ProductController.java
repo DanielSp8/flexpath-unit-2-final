@@ -56,6 +56,13 @@ public class ProductController {
         return productDao.createProduct(product);
     }
 
+    /**
+     *
+     * @param id
+     * @param product
+     * @return Either the updated product info
+     *          or a ResponseStatusException (404) error message
+     */
     @PutMapping(path = "/{id}")
     public Product updateProduct(@PathVariable int id, @RequestBody Product product) {
         try {
@@ -66,6 +73,18 @@ public class ProductController {
                     "Product not found",
                     ex
             );
+        }
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public int delete(@PathVariable int id) {
+        int removedNum = productDao.deleteProduct(id);
+        if (removedNum == 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Product not found");
+        } else {
+            return removedNum;
         }
     }
 

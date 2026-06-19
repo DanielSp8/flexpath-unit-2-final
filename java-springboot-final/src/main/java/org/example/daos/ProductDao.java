@@ -63,6 +63,12 @@ public class ProductDao {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @param product
+     * @return
+     */
     public Product updateProduct(int id,  Product product) {
         String sql = "UPDATE products SET name = ?, price = ? WHERE id = ?;";
         int rowsAffected = jdbcTemplate.update(sql, product.getName(), product.getPrice(), id);
@@ -73,9 +79,19 @@ public class ProductDao {
         }
     }
 
+    public int deleteProduct(int id) {
+        String sql = "DELETE FROM products WHERE id = ?;";
+        return jdbcTemplate.update(sql, id);
+    }
 
 
-
+    /**
+     *
+     * @param resultSet
+     * @param rowNumber
+     * @return a new product object, constructed from the columns retrieved from the DB rowNumber(s)
+     * @throws SQLException
+     */
     private Product mapToProducts(ResultSet resultSet, int rowNumber) throws SQLException {
         int id = resultSet.getInt("id");
         return new Product(

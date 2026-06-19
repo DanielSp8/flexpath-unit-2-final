@@ -63,7 +63,11 @@ public class OrderDao {
     }
 
     /**
-     * Update an order by its ID
+     *
+     * @param id
+     * @param order
+     * @return a custom DaoException error message, if the DB fails to update
+     *          or return the updated order from the DB
      */
     public Order updateOrder(int id, Order order) {
         String sql = "UPDATE orders SET username = ? WHERE id = ?;";
