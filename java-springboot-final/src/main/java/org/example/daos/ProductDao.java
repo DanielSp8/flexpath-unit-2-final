@@ -4,15 +4,10 @@ package org.example.daos;
 import org.example.exceptions.DaoException;
 import org.example.models.Product;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
@@ -46,6 +41,11 @@ public class ProductDao {
         return jdbcTemplate.queryForObject("SELECT * FROM products WHERE id = ?;", this::mapToProducts, productId);
     }
 
+    /**
+     *
+     * @param product
+     * @return The product object, which was created in the DB
+     */
     public Product createProduct(Product product) {
         try {
             String sql = "INSERT INTO products (name, price) VALUES (?, ?);";
@@ -63,6 +63,18 @@ public class ProductDao {
         }
     }
 
+    public Product updateProduct(int id,  Product product) {
+        String sql = "UPDATE products SET name = ?, price = ? WHERE id = ?;";
+        int rowsAffected = jdbcTemplate.update(sql, product.getName(), product.getPrice(), id);
+        if (rowsAffected == 0) {
+            throw new DaoException("Failed to update product.");
+        } else {
+            return getProductById(id);
+        }
+    }
+
+
+
 
     private Product mapToProducts(ResultSet resultSet, int rowNumber) throws SQLException {
         int id = resultSet.getInt("id");
@@ -72,5 +84,9 @@ public class ProductDao {
                 resultSet.getBigDecimal("price")
         );
     }
+
+
+
+
 
 }

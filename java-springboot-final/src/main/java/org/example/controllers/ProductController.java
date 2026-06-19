@@ -27,6 +27,11 @@ public class ProductController {
         return productDao.getProducts();
     }
 
+    /**
+     *
+     * @param id
+     * @return a product by its id
+     */
     @GetMapping(path = "/{id}")
     public Product getProductById(@PathVariable int id) {
         try {
@@ -40,11 +45,28 @@ public class ProductController {
         }
     }
 
+    /**
+     *
+     * @param product
+     * @return The product that was created in the DB
+     */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
         return productDao.createProduct(product);
     }
 
+    @PutMapping(path = "/{id}")
+    public Product updateProduct(@PathVariable int id, @RequestBody Product product) {
+        try {
+            return productDao.updateProduct(id, product);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Product not found",
+                    ex
+            );
+        }
+    }
 
 }
