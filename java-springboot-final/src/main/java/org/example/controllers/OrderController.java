@@ -4,18 +4,18 @@ import org.example.daos.OrderDao;
 import org.example.models.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api/orders")
-
+@PreAuthorize("isAuthenticated()")
 public class OrderController {
-
-
     /**
      *  The order data access object
      */
@@ -57,7 +57,8 @@ public class OrderController {
      */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Order create(@RequestBody Order order) {
+    public Order create(@RequestBody Order order, Principal principal) {
+        order.setUsername(principal.getName());
         return orderDao.createOrder(order);
     }
 
