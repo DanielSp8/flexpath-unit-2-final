@@ -40,5 +40,11 @@ public class ProductController {
         }
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    public Product createProduct(@RequestBody Product product) {
+        return productDao.createProduct(product);
+    }
+
 
 }
