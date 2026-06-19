@@ -4,10 +4,12 @@ import org.example.exceptions.DaoException;
 import org.example.models.Order;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
@@ -15,7 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class OrderDao {
@@ -36,15 +37,14 @@ public class OrderDao {
      * Return an order by its ID
      */
     public Order getOrderById(int orderId) {
-        try {
-            return jdbcTemplate.queryForObject("SELECT * FROM orders WHERE id = ?;", this::mapToOrders, orderId);
-        } catch (DataAccessException e) {
-            return null;
-        }
+        return jdbcTemplate.queryForObject("SELECT * FROM orders WHERE id = ?;", this::mapToOrders, orderId);
     }
 
     /**
-     * POST/Create a new order
+     *
+     * @param order
+     * Create an order with the order object
+     * @return the order with the updated id key
      */
     public Order createOrder(Order order) {
         try {
@@ -56,9 +56,7 @@ public class OrderDao {
                         return ps;
                     }, keyHolder);
             order.setId(keyHolder.getKey().intValue());
-
             return order;
-            //return Objects.requireNonNull(keyHolder.getKey()).longValue();
         } catch (EmptyResultDataAccessException e) {
             throw new DaoException("Failed to create new order.");
         }
@@ -67,13 +65,13 @@ public class OrderDao {
     /**
      * Update an order by its ID
      */
-    public String updateOrder(Order order) {
-        String sql = "UPDATE orders SET order_id = ?, user_id = ? WHERE order_id = ?;";
-        int rowsAffected = jdbcTemplate.update(sql, order.getId(), order.getUsername(), order.getId());
+    public Order updateOrder(int id, Order order) {
+        String sql = "UPDATE orders SET username = ? WHERE id = ?;";
+        int rowsAffected = jdbcTemplate.update(sql, order.getUsername(), id);
         if (rowsAffected == 0) {
             throw new DaoException("Failed to update order.");
         } else {
-            return rowsAffected + " row updated with information.";
+            return getOrderById(id);
         }
     }
 
