@@ -17,9 +17,18 @@ public class OrderItemDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    /**
+     *
+     * @return all order-items
+     */
     public List<OrderItem> getOrderItems() {
         return jdbcTemplate.query("SELECT * FROM order_items;", this::mapToOrderItems);
     }
+
+    public OrderItem getOrderItemById(int orderItemId) {
+        return jdbcTemplate.queryForObject("SELECT * FROM order_items WHERE id = ?;", this::mapToOrderItems, orderItemId);
+    }
+
 
     private OrderItem mapToOrderItems(ResultSet resultSet, int rowNumber) throws SQLException {
         int id = resultSet.getInt("id");
