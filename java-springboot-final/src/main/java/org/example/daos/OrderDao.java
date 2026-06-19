@@ -80,7 +80,7 @@ public class OrderDao {
      *  Delete an order by its ID
      */
     public int deleteOrder(int orderId) {
-        String sql = "DELETE FROM orders WHERE order_id = ?;";
+        String sql = "DELETE FROM orders WHERE id = ?;";
         return jdbcTemplate.update(sql, orderId);
     }
 
