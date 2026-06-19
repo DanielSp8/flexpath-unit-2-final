@@ -2,14 +2,11 @@ package org.example.daos;
 
 import org.example.exceptions.DaoException;
 import org.example.models.Order;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
@@ -64,8 +61,8 @@ public class OrderDao {
 
     /**
      *
-     * @param id
-     * @param order
+     * @param id: references the primary id of the order to update
+     * @param order: the object info to update in the DB
      * @return a custom DaoException error message, if the DB fails to update
      *          or return the updated order from the DB
      */
