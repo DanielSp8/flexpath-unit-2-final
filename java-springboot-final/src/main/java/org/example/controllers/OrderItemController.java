@@ -38,5 +38,11 @@ public class OrderItemController {
         }
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    public OrderItem createOrderItem(@RequestBody OrderItem orderItem) {
+        return orderItemDao.createOrderItem(orderItem);
+    }
+
 
 }
