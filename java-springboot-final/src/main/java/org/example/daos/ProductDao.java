@@ -34,7 +34,7 @@ public class ProductDao {
 
     /**
      *
-     * @param productId
+     * @param productId, references the primary key of the product
      * @return The product by its id from the DB
      */
     public Product getProductById(int productId) {
@@ -43,7 +43,7 @@ public class ProductDao {
 
     /**
      *
-     * @param product
+     * @param product, references the product object
      * @return The product object, which was created in the DB
      */
     public Product createProduct(Product product) {
@@ -65,9 +65,10 @@ public class ProductDao {
 
     /**
      *
-     * @param id
-     * @param product
-     * @return
+     * @param id, the primary key id
+     * @param product, the product object to update
+     * @return an error message, if it fails to update,
+     *          or return the product by its id
      */
     public Product updateProduct(int id,  Product product) {
         String sql = "UPDATE products SET name = ?, price = ? WHERE id = ?;";
