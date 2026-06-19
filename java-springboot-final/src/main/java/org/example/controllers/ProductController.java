@@ -3,10 +3,9 @@ package org.example.controllers;
 import org.example.daos.ProductDao;
 import org.example.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,8 +18,27 @@ public class ProductController {
     @Autowired
     private ProductDao productDao;
 
+    /**
+     *
+     * @return A list of all products
+     */
     @GetMapping
     public List<Product> getProducts() {
         return productDao.getProducts();
     }
+
+    @GetMapping(path = "/{id}")
+    public Product getProductById(@PathVariable int id) {
+        try {
+            return productDao.getProductById(id);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Product not found",
+                    ex
+            );
+        }
+    }
+
+
 }
