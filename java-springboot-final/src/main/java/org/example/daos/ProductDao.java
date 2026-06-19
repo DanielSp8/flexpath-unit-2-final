@@ -79,6 +79,11 @@ public class ProductDao {
         }
     }
 
+    /**
+     *
+     * @param id, the primary key to reference the product
+     * @return the info from the DB delete attempt
+     */
     public int deleteProduct(int id) {
         String sql = "DELETE FROM products WHERE id = ?;";
         return jdbcTemplate.update(sql, id);

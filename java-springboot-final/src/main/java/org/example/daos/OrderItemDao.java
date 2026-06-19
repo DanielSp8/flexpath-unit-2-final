@@ -33,13 +33,19 @@ public class OrderItemDao {
 
     /**
      *
-     * @param orderItemId
+     * @param orderItemId, the primary id of the order item to GET from the DB
      * @return an order item by its id
      */
     public OrderItem getOrderItemById(int orderItemId) {
         return jdbcTemplate.queryForObject("SELECT * FROM order_items WHERE id = ?;", this::mapToOrderItems, orderItemId);
     }
 
+    /**
+     *
+     * @param orderItem, the object to create in the DB
+     * @return the orderItem that was created in the DB,
+     *   or an error message if it fails to create it
+     */
     public OrderItem createOrderItem(OrderItem orderItem) {
         try {
             String sql = "INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?);";
@@ -57,6 +63,30 @@ public class OrderItemDao {
             throw new DaoException("Failed to create new order item.");
         }
     }
+
+    /**
+     *
+     * @param id, references the primary key to update in the DB
+     * @param orderItem, the object to update in the DB
+     * @return throw an error message (if 0 rows are affected, indicating that the DB was not updated,
+     *          or return the DB order item by its primary id
+     */
+    public OrderItem updateOrderItem(int id, OrderItem orderItem) {
+        String sql = "UPDATE order_items SET order_id = ?, product_id = ?, quantity = ? WHERE id = ?;";
+        int rowsAffected = jdbcTemplate.update(sql, orderItem.getOrderId(), orderItem.getProductId(), orderItem.getQuantity(), id);
+        if (rowsAffected == 0) {
+            throw new DaoException("Failed to update order item.");
+        } else {
+            return getOrderItemById(id);
+        }
+    }
+
+    public int deleteOrderItem(int id) {
+        String sql = "DELETE FROM order_items WHERE id = ?;";
+        return jdbcTemplate.update(sql, id);
+    }
+
+
 
 
     private OrderItem mapToOrderItems(ResultSet resultSet, int rowNumber) throws SQLException {
